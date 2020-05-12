@@ -7,23 +7,43 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.conf import settings
-import pandas as pd
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.views import LogoutView
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
+# import pandas as pd
 
-from apps.users.forms import (
+from app.users.forms import (
     UserPositionCreatUpdateForm,
     UserTeamCreateUpdateForm,
     UserProjectJoinedCreateUpdateForm,
     UserSkillCreateUpdateForm,
     UserMemberCreateUpdateForm,
-    UserExportCSVCreateForm
+    UserExportCSVCreateForm,
+    SigninForm
 )
-from apps.users.models import (
+from app.users.models import (
     UserPosition,
     UserTeam,
     UserProjectJoined,
     UserSkill,
     User
 )
+
+
+class UserDetailView(View):
+    template_name = 'user/profile.html'
+
+    def get(self, request, *args, **kwargs):
+        user_id = kwargs.get('id')
+        user = User.objects.filter(id=user_id)
+        # for course in user:
+        #     print(course['username'])
+        # print(user.username)
+        if not user:
+            return render(request, '404.html', {})
+        return render(request, self.template_name, {'user': user})
 
 
 class AdminDashboardView(View):
@@ -274,3 +294,46 @@ class UserExportCSVCreateView(View):
                 dict_writer.writerows(data)
             return redirect(f'/media/export/{prefix}/{file_name}')
         return render(request, '500.html', {})
+
+
+class SignInView(View):
+    def get(self, request, *args, **kwargs):
+        template_name = 'auth/signin.html'
+        form = SigninForm()
+        content = {'form': form}
+        return render(request, template_name, content)
+
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            if 'next' in request.POST:
+                return redirect(request.POST.get('next'))
+            else:
+                return redirect('/dashboard')
+
+        return HttpResponse('Error username or password')
+
+
+def sign_up_view(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        form.save()
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        return redirect('/dashboard')
+    return render(request, 'auth/signup.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('users:login'))
+
+
+class SignOutView(LogoutView):
+    template_name = 'auth/signin.html'
+    extra_context = {'form': SigninForm()}

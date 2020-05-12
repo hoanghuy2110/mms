@@ -28,8 +28,9 @@
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account <b
                                         class="caret"></b></a>
                                 <ul class="dropdown-menu animated fadeInUp">
-                                    <li><a href="profile.html">Profile</a></li>
-                                    <li><a href="login.html">Logout</a></li>
+                                    <h5 class="text-overflow" style="margin-left: 15px">{{user.username}}</h5>
+                                    <li><a href="{% url 'users:profile' user.id %}">Profile</a></li>
+                                    <li><a href="{% url 'users:signout' %}">Logout</a></li>
                                 </ul>
                             </li>
                         </ul>

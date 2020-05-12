@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Django Book review</title>
+    <!-- Bootstrap CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <!-- END CSS for this page -->
+</head>
+<body>
+{% load crispy_forms_tags %}
+    <div class="row justify-content-center">
+        <div class="col col-md-5 mt-5">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title text-center" style="text-align:center;">Login</h1>
+                    <hr>
+                     <form action="{% url 'users:signin' %}" method="post">
+                         {% csrf_token %}
+                         {{ form|crispy}}
+                         {% if request.GET.next %}
+                            <input
+                                type="hidden"
+                                name="next"
+                                value="{{request.GET.next}}"
+                            >
+                        {% endif %}
+                         <div style="text-align:center; margin-top: 20px;">
+                             <button type="submit" class="btn btn-primary">Login</button>
+                         </div>
+                     </form>
+                    <span>Do not have an account ? </span><a href="{% url 'users:signup' %}" class="text-center">Signup</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
