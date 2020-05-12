@@ -1,7 +1,9 @@
 from django.urls import path
 
 from .views import (
-    # UserDetailView,
+    UserPositionCreateView,
+    UserPositionListView,
+    UserPositionUpdateView,
     AdminDashboardView,
     # UserUpdateView,
     # SignUpView,
@@ -22,4 +24,7 @@ urlpatterns = [
     # path('user/<int:id>/edit/', UserUpdateView.as_view(), name='user-update'),
     # path('user/<int:id>/', UserDetailView.as_view(), name='user-detail'),
     path('dashboard/', AdminDashboardView.as_view(), name='dashboard'),
+    path('position/add/', UserPositionCreateView.as_view(), name='position-add'),
+    path('position/<int:id>/edit/', UserPositionUpdateView.as_view(), name='position-update'),
+    path('positions/', UserPositionListView.as_view(), name='position-list'),
 ]

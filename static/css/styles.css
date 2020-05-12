@@ -27,6 +27,8 @@ footer {
     line-height: 25px;
     padding: 10px 0px 10px 0px;
     bottom: 0px;
+    position: fixed;
+    width: 100%;
 }
 
 footer a {
@@ -581,7 +583,6 @@ body {
 
 .panel-heading > .panel-title, .content-box-header .panel-title {
     float: left;
-    padding: 10px 15px;
     padding-top: 0px;
 }
 
@@ -595,7 +596,6 @@ body {
 
 .panel-heading > .panel-options, .content-box-header .panel-options {
     float: right;
-    padding-right: 15px;
 }
 
 .panel-heading > .panel-options > a, .content-box-header .panel-options > a {
