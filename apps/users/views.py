@@ -133,7 +133,10 @@ class UserProjectJoinedCreateView(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            members = form.cleaned_data['members']
+            form.cleaned_data['members'] = members.split(';')
+            x = UserProjectJoined(**form.cleaned_data)
+            x.save()
             return redirect(reverse_lazy('users:project-joined-list'))
         return render(request, self.template_name, {'form': form})
 

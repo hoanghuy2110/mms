@@ -19,7 +19,6 @@
                     <th>Name</th>
                     <th>Short Name</th>
                     <th>Project Leader</th>
-                    <th>Members</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -29,7 +28,6 @@
                     <td><a href="#">{{ project_joined.name }}</a></td>
                     <td>{{ project_joined.short_name }}</td>
                     <td>{{ project_joined.project_leader }}</td>
-                    <td>{{ project_joined.members|count }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
