@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-md-6">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">Table Positions</div>
+
+            <div class="panel-options">
+                <a href="{% url 'users:position-list' %}" data-rel="collapse"><i
+                        class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Short Name</th>
+                    <th>Project Leader</th>
+                    <th>Members</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for project_joined in projects_joined %}
+                <tr>
+                    <td>{{ project_joined.id }}</td>
+                    <td><a href="#">{{ project_joined.name }}</a></td>
+                    <td>{{ project_joined.short_name }}</td>
+                    <td>{{ project_joined.project_leader }}</td>
+                    <td>{{ project_joined.members|count }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                    {% if projects_joined.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1">«</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects_joined.previous_page_number }}">prev</a>
+                    </li>
+                    {% endif %}
+                    <li class="page-item">
+                        <a class="current page-link">
+                            {{ projects_joined.number }}
+                        </a>
+                    </li>
+                    {% if projects_joined.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects_joined.next_page_number }}">next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ projects_joined.paginator.num_pages }}">»</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

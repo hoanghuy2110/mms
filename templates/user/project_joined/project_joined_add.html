@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-md-6">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">Create Project Joined Form</div>
+
+            <div class="panel-options">
+                <a href="{% url 'users:project-joined-add' %}" data-rel="collapse"><i
+                        class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" method="post" action="{% url 'users:project-joined-add' %}">
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="inputName" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputName" placeholder="Name" name="name"
+                               value="{{ form.name.value }}">
+                        {% if form.name.errors %}
+                        <p></p>
+                        {% for error in form.name.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputShortName" class="col-sm-2 control-label">Short Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputShortName" placeholder="Short Name"
+                               name="short_name"
+                               value="{{ form.short_name.value }}">
+                        {% if form.short_name.errors %}
+                        <p></p>
+                        {% for error in form.name.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputStartDate" class="col-sm-2 control-label">Start Date</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputStartDate" placeholder="Start Date"
+                               name="start_date"
+                               value="{{ form.start_date.value }}">
+                        {% if form.start_date.errors %}
+                        <p></p>
+                        {% for error in form.start_date.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEndDate" class="col-sm-2 control-label">End Date</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputEndDate" placeholder="End Date"
+                               name="start_date"
+                               value="{{ form.start_date.value }}">
+                        {% if form.end_date.errors %}
+                        <p></p>
+                        {% for error in form.start_date.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputLeaderName" class="col-sm-2 control-label">Project Leader</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputLeaderName" placeholder="Leader Name"
+                               name="project_leader" value="{{ form.project_leader.value }}">
+                        {% if form.project_leader.errors %}
+                        <p></p>
+                        {% for error in form.project_leader.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Team</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="select-1" name="team">
+                            {% for team in teams %}
+                            {% if team.id == form.team.value %}
+                            <option value="{{ team.id }}" selected>{{ team.name }}</option>
+                            {% else %}
+                            <option value="{{ team.id }}">{{ team.name }}</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                        {% if form.team.errors %}
+                        <p></p>
+                        {% for error in form.team.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputMembers" class="col-sm-2 control-label">Members</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="inputMembers" placeholder="Members"
+                                  name="description">{{ form.members.value }}</textarea>
+                        {% if form.members.errors %}
+                        <p></p>
+                        {% for error in form.members.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block custom_js %}
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $( function() {
+        $( "#inputStartDate" ).datepicker();
+    } );
+
+</script>
+{% endblock %}

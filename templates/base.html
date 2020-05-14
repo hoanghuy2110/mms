@@ -5,6 +5,7 @@
     <title>Bootstrap Admin Theme v3</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- styles -->
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
@@ -36,7 +37,16 @@
                         </ul>
                     </li>
                     <li><a href="#"><i class="glyphicon glyphicon-user"></i>User</a></li>
-                    <li><a href="stats.html"><i class="glyphicon glyphicon-stats"></i>Team</a></li>
+                    <li class="submenu">
+                        <a href="{% url 'users:team-list' %}">
+                            <i class="glyphicon glyphicon-stats"></i>Team
+                            <span class="caret pull-right"></span>
+                        </a>
+                        <ul>
+                            <li><a href="{% url 'users:team-list' %}">List</a></li>
+                            <li><a href="{% url 'users:team-add' %}">Create</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -64,5 +74,6 @@
 <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 <!-- Custom js -->
 <script src="{% static 'js/custom.js' %}"></script>
+{% block custom_js %}{% endblock %}
 </body>
 </html>

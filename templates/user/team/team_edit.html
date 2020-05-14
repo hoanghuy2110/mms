@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-md-6">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">Update Team Form</div>
+
+            <div class="panel-options">
+                <a href="{% if form %}{% url 'users:team-update' team_id %}{% else %}{% url 'users:team-update' team.id %}{% endif %}"
+                   data-rel="collapse"><i class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" method="post"
+                  action="{% if form %}{% url 'users:team-update' team_id %}{% else %}{% url 'users:team-update' team.id %}{% endif %}">
+            {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+            {% endfor %}
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="inputName" class="col-sm-2 control-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputName" placeholder="Name" name="name"
+                           value="{% if form %}{{ form.name.value }}{% else %}{{ team.name }}{% endif %}">
+                    {% if form.name.errors %}
+                    <p></p>
+                    {% for error in form.name.errors %}
+                    <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputLeaderName" class="col-sm-2 control-label">Leader</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputLeaderName" placeholder="Leader Name"
+                           name="leader"
+                           value="{% if form %}{{ form.leader.value }}{% else %}{{ team.leader }}{% endif %}">
+                    {% if form.leader.errors %}
+                    <p></p>
+                    {% for error in form.leader.errors %}
+                    <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputDescription" class="col-sm-2 control-label">Description</label>
+                <div class="col-sm-10">
+                        <textarea class="form-control" id="inputDescription" placeholder="Description"
+                                  name="description">{% if form %}{{ form.description.value }}{% else %}{{ team.description }}{% endif %}</textarea>
+                    {% if form.description.errors %}
+                    <p></p>
+                    {% for error in form.description.errors %}
+                    <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
