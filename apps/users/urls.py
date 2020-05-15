@@ -13,7 +13,8 @@ from .views import (
     UserProjectJoinedUpdateView,
     UserMemberCreateView,
     UserMemberListView,
-    UserExportCSVCreateView
+    UserExportCSVCreateView,
+    UserSkillCreateView
     # SignInView,
     # SignOutView,
     # UserListView,
@@ -27,7 +28,8 @@ urlpatterns = [
     # path('signout', SignOutView.as_view(), name='signout'),
     #
     # path('user/<int:id>/change-role/', ChangeRoleUserView.as_view(), name='change-role'),
-    path('member/add', UserMemberCreateView.as_view(), name='member-add'),
+    path('member/add/', UserMemberCreateView.as_view(), name='member-add'),
+    path('member/<int:id>/skill/add/', UserSkillCreateView.as_view(), name='member-add-skill'),
     path('members/', UserMemberListView.as_view(), name='member-list'),
     # path('user/<int:id>/edit/', UserUpdateView.as_view(), name='user-update'),
     # path('user/<int:id>/', UserDetailView.as_view(), name='user-detail'),

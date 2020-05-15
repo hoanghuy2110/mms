@@ -80,7 +80,8 @@
                     <div class="col-sm-10">
                         <select class="form-control" id="inputPosition" name="position">
                             {% for position in positions %}
-                            <option value="{{ position.id }}" {% if form.is_activate.value == position.id %} selected {% endif %}>{{ position.name }}</option>
+                            <option value="{{ position.id }}" {% if form.is_activate.value == position.id %} selected {% endif %}>{{ position.name }}
+                            </option>
                             {% endfor %}
                         </select>
                         {% if form.is_activate.errors %}
@@ -89,6 +90,12 @@
                         <p><strong class="text-danger">{{ error|escape }}</strong></p>
                         {% endfor %}
                         {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label  class="col-sm-2 control-label">Skill</label>
+                    <div class="col-sm-2">
+                        <input type="button" data-toggle="modal" value="Add skill" class="btn btn-primary" data-target="#inputSkill">
                     </div>
                 </div>
                 <div class="form-group">
@@ -111,9 +118,11 @@
                 <div class="form-group">
                     <label for="inputProjectJoined" class="col-sm-2 control-label">Project Joined</label>
                     <div class="col-sm-10">
-                        <select class="form-control" id="inputProjectJoined" name="user_project_joined" multiple required>
+                        <select class="form-control" id="inputProjectJoined" name="user_project_joined" multiple
+                                required>
                             {% for project in user_project_joined %}
-                            <option value="{{ project.id }}" {% if form.user_project_joined.value == project.id %} selected {% endif %}>{{ project.name }}
+                            <option value="{{ project.id }}" {% if form.user_project_joined.value == project.id %}
+                                    selected {% endif %}>{{ project.name }}
                             </option>
                             {% endfor %}
                         </select>
@@ -134,4 +143,68 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="inputSkill" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add skills</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-inline">
+                    <div class="form-skill-container">
+                        <div class="form-skill" id="form-skill-1">
+                            <input type="text" name="name-1" id="name-1" placeholder="Name">
+                            <input type="text" name="level-1" id="level-1" placeholder="Level">
+                            <input type="text" name="exp-1" id="exp-1" placeholder="EXP"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="addMore">Add more</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block custom_js %}
+<script type="text/javascript">
+    var total = 1;
+    $(function() {
+        $("#addMore").click(function(e) {
+            e.preventDefault();
+            var addBlockId = total = total + 1;
+
+            var addBlock = document.createElement('div');
+            $(addBlock).addClass('form-skill');
+            $(addBlock).attr('id','form-skill-' + addBlockId);
+
+            var inputName = document.createElement('input');
+            $(inputName).attr('type','text');
+            $(inputName).attr('name','name-' + addBlockId);
+            $(inputName).attr('id','name-' + addBlockId);
+            $(inputName).attr('placeholder','Name');
+            $(inputName).appendTo($(addBlock));
+
+            var inputLevel = document.createElement('input');
+            $(inputLevel).attr('type','text');
+            $(inputLevel).attr('name','level-' + addBlockId);
+            $(inputLevel).attr('id','level-' + addBlockId);
+            $(inputLevel).attr('placeholder','Level');
+            $(inputLevel).appendTo($(addBlock));
+
+            var inputEXP = document.createElement('input');
+            $(inputEXP).attr('type','text');
+            $(inputEXP).attr('name','exp-' + addBlockId);
+            $(inputEXP).attr('id','exp-' + addBlockId);
+            $(inputEXP).attr('placeholder','EXP');
+            $(inputEXP).appendTo($(addBlock));
+
+            $(addBlock).appendTo($('.form-skill-container'));
+        });
+    });
+</script>
 {% endblock %}

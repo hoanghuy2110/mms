@@ -229,11 +229,11 @@ class UserMemberListView(View):
 
 
 class UserSkillCreateView(View):
-    template_name = 'user/skill/skill_add.html'
-    form_class = UserSkillCreateUpdateForm
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name, {})
+    # template_name = 'user/skill/skill_add.html'
+    # form_class = UserSkillCreateUpdateForm
+    #
+    # def get(self, request, *args, **kwargs):
+    #     return render(request, self.template_name, {})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
