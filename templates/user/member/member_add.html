@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-md-6">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">Create Member Form</div>
+
+            <div class="panel-options">
+                <a href="{% url 'users:member-add' %}" data-rel="collapse"><i
+                        class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" method="post" action="{% url 'users:member-add' %}">
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="inputUsername" class="col-sm-2 control-label">UserName</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputUsername" placeholder="UserName"
+                               name="username" value="{{ form.username.value }}">
+                        {% if form.username.errors %}
+                        <p></p>
+                        {% for error in form.name.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail" class="col-sm-2 control-label">Email</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" id="inputEmail" placeholder="Email"
+                               name="email" value="{{ form.short_name.value }}">
+                        {% if form.email.errors %}
+                        <p></p>
+                        {% for error in form.email.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputRole" class="col-sm-2 control-label">Username</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="inputRole" name="role">
+                            <option value="0" {% if form.role == 0 %} selected {% endif %}>Admin</option>
+                            <option value="1" {% if form.role == 1 %} selected {% endif %}>Member</option>
+                        </select>
+                        {% if form.role.errors %}
+                        <p></p>
+                        {% for error in form.role.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputActive" class="col-sm-2 control-label">Active</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="inputActive" name="is_activate">
+                            <option value="0" {% if form.is_activate == 0 %}selected{% endif %}>InActive</option>
+                            <option value="1" {% if form.is_activate == 1 %}selected{% endif %}>Active</option>
+                        </select>
+                        {% if form.is_activate.errors %}
+                        <p></p>
+                        {% for error in form.is_activate.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPosition" class="col-sm-2 control-label">Position</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="inputPosition" name="position">
+                            {% for position in positions %}
+                            <option value="{{ position.id }}" {% if form.is_activate.value == position.id %} selected {% endif %}>{{ position.name }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if form.is_activate.errors %}
+                        <p></p>
+                        {% for error in form.is_activate.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputTeam" class="col-sm-2 control-label">Team</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="inputTeam" name="team">
+                            {% for team in teams %}
+                            <option value="{{ team.id }}" {% if form.team.value == team.id %} selected {% endif %}>{{ team.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.team.errors %}
+                        <p></p>
+                        {% for error in form.team.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputProjectJoined" class="col-sm-2 control-label">Project Joined</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="inputProjectJoined" name="user_project_joined" multiple required>
+                            {% for project in user_project_joined %}
+                            <option value="{{ project.id }}" {% if form.user_project_joined.value == project.id %} selected {% endif %}>{{ project.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.project_joined.errors %}
+                        <p></p>
+                        {% for error in form.project_joined.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

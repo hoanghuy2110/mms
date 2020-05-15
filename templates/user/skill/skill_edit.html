@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-md-6">
+    <div class="content-box-large">
+        <div class="panel-heading">
+            <div class="panel-title">Update Position Form</div>
+
+            <div class="panel-options">
+                <a href="{% if form %}{% url 'users:position-update' position_id %}{% else %}{% url 'users:position-update' position.id %}{% endif %}" data-rel="collapse"><i
+                        class="glyphicon glyphicon-refresh"></i></a>
+            </div>
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" method="post" action="{% if form %}{% url 'users:position-update' position_id %}{% else %}{% url 'users:position-update' position.id %}{% endif %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="inputName" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputName" placeholder="Name" name="name"
+                               value="{{ position.name }}">
+                        {% if form.name.errors %}
+                        <p></p>
+                        {% for error in form.name.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputShortName" class="col-sm-2 control-label">Short Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="inputShortName" placeholder="Short Name"
+                               name="short_name" value="{{ position.short_name }}">
+                        {% if form.short_name.errors %}
+                        <p></p>
+                        {% for error in form.short_name.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

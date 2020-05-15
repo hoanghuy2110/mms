@@ -10,7 +10,9 @@ from .views import (
     UserTeamUpdateView,
     UserProjectJoinedCreateView,
     UserProjectJoinedListView,
-    # SignUpView,
+    UserProjectJoinedUpdateView,
+    UserMemberCreateView,
+    UserMemberListView
     # SignInView,
     # SignOutView,
     # UserListView,
@@ -24,7 +26,8 @@ urlpatterns = [
     # path('signout', SignOutView.as_view(), name='signout'),
     #
     # path('user/<int:id>/change-role/', ChangeRoleUserView.as_view(), name='change-role'),
-    # path('users/', UserListView.as_view(), name='users-list'),
+    path('member/add', UserMemberCreateView.as_view(), name='member-add'),
+    path('members/', UserMemberListView.as_view(), name='member-list'),
     # path('user/<int:id>/edit/', UserUpdateView.as_view(), name='user-update'),
     # path('user/<int:id>/', UserDetailView.as_view(), name='user-detail'),
     path('dashboard/', AdminDashboardView.as_view(), name='dashboard'),
@@ -36,4 +39,5 @@ urlpatterns = [
     path('team/<int:id>/edit/', UserTeamUpdateView.as_view(), name='team-update'),
     path('project-joined/add/', UserProjectJoinedCreateView.as_view(), name='project-joined-add'),
     path('projects-joined/', UserProjectJoinedListView.as_view(), name='project-joined-list'),
+    path('project-joined/<int:id>/edit/', UserProjectJoinedUpdateView.as_view(), name='project-joined-update'),
 ]

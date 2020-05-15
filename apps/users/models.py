@@ -15,21 +15,6 @@ class UserPosition(BaseModel):
         db_table = 'user_position'
 
 
-class UserSkill(BaseModel):
-    LEVELS = (
-        (0, 'Junior'),
-        (1, 'Middle 1'),
-        (2, 'Middle 2'),
-        (3, 'Senior'),
-    )
-    name = models.CharField(max_length=128)
-    level = models.IntegerField(choices=LEVELS, default=LEVELS[0][0])
-    years_experience = models.IntegerField(default=1)
-
-    class Meta:
-        db_table = 'user_skill'
-
-
 class UserTeam(BaseModel):
     name = models.CharField(max_length=128)
     description = models.TextField()
@@ -67,9 +52,8 @@ class User(AbstractBaseUser, BaseModel):
     role = models.IntegerField(choices=USER_ROLES, default=ROLE_MEMBER)
     is_activate = models.BooleanField(default=False)
     position = models.ForeignKey(UserPosition, on_delete=models.CASCADE, null=True)
-    skill = models.ForeignKey(UserSkill, on_delete=models.CASCADE, null=True)
-    team = models.OneToOneField(UserTeam, on_delete=models.CASCADE, null=True)
-    project_joined = models.ForeignKey(UserProjectJoined, on_delete=models.CASCADE, null=True)
+    team = models.ForeignKey(UserTeam, on_delete=models.CASCADE, null=True)
+    user_project_joined = models.ManyToManyField(UserProjectJoined)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -81,3 +65,20 @@ class User(AbstractBaseUser, BaseModel):
 
     def __str__(self):
         return 'User: {}'.format(self.username)
+
+
+class UserSkill(BaseModel):
+    LEVELS = (
+        (0, 'Junior'),
+        (1, 'Middle 1'),
+        (2, 'Middle 2'),
+        (3, 'Senior'),
+    )
+    name = models.CharField(max_length=128)
+    level = models.IntegerField(choices=LEVELS, default=LEVELS[0][0])
+    years_experience = models.IntegerField(default=1)
+
+    # user = models.ManyToManyField(User)
+
+    class Meta:
+        db_table = 'user_skill'

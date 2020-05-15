@@ -1,13 +1,10 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block content %}
 <div class="col-md-6">
     <div class="content-box-large">
         <div class="panel-heading">
             <div class="panel-title">Table Positions</div>
 
             <div class="panel-options">
-                <a href="{% url 'users:position-list' %}" data-rel="collapse"><i
+                <a href="{% url 'users:skill-list' %}" data-rel="collapse"><i
                         class="glyphicon glyphicon-refresh"></i></a>
             </div>
         </div>
@@ -17,44 +14,42 @@
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Short Name</th>
-                    <th>Project Leader</th>
-                    <th>Number members</th>
+                    <th>Level</th>
+                    <th>Years Experience</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for project_joined in projects_joined %}
+                {% for skill in skills %}
                 <tr>
-                    <td>{{ project_joined.id }}</td>
-                    <td><a href="{% url 'users:project-joined-update' project_joined.id %}">{{ project_joined.name }}</a></td>
-                    <td>{{ project_joined.short_name }}</td>
-                    <td>{{ project_joined.project_leader }}</td>
-                    <td>{{ project_joined.members|length }}</td>
+                    <td>{{ skill.id }}</td>
+                    <td><a href="{% url 'users:skill-update' skill.id %}">{{ skill.name }}</a></td>
+                    <td>{{ skill.level }}</td>
+                    <td>{{ years_experience.level }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
             <div class="card-footer clearfix">
                 <ul class="pagination pagination-sm m-0 float-right">
-                    {% if projects_joined.has_previous %}
+                    {% if skills.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=1">«</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ projects_joined.previous_page_number }}">prev</a>
+                        <a class="page-link" href="?page={{ skills.previous_page_number }}">prev</a>
                     </li>
                     {% endif %}
                     <li class="page-item">
                         <a class="current page-link">
-                            {{ projects_joined.number }}
+                            {{ skills.number }}
                         </a>
                     </li>
-                    {% if projects_joined.has_next %}
+                    {% if skills.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ projects_joined.next_page_number }}">next</a>
+                        <a class="page-link" href="?page={{ skills.next_page_number }}">next</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ projects_joined.paginator.num_pages }}">»</a>
+                        <a class="page-link" href="?page={{ skills.paginator.num_pages }}">»</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -62,4 +57,3 @@
         </div>
     </div>
 </div>
-{% endblock %}

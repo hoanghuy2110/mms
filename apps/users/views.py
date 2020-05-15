@@ -6,12 +6,16 @@ from django.views import View
 from apps.users.forms import (
     UserPositionCreatUpdateForm,
     UserTeamCreateUpdateForm,
-    UserProjectJoinedCreateForm
+    UserProjectJoinedCreateUpdateForm,
+    UserSkillCreateUpdateForm,
+    UserMemberCreateUpdateForm
 )
 from apps.users.models import (
     UserPosition,
     UserTeam,
-    UserProjectJoined
+    UserProjectJoined,
+    UserSkill,
+    User
 )
 
 
@@ -103,28 +107,27 @@ class UserTeamUpdateView(View):
     template_name = 'user/team/team_edit.html'
     form_class = UserTeamCreateUpdateForm
 
-    def get(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         team_id = kwargs.get('id')
-        team = UserTeam.objects.filter(id=team_id).first()
-        if not team:
+        self.team = UserTeam.objects.filter(id=team_id).first()
+        if not self.team:
             return render(request, '404.html', {})
-        return render(request, self.template_name, {'team': team})
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {'team': self.team})
 
     def post(self, request, *args, **kwargs):
-        team_id = kwargs.get('id')
-        team = UserTeam.objects.filter(id=team_id).first()
-        if not team:
-            return render(request, '404.html', {})
-        form = self.form_class(request.POST, instance=team)
+        form = self.form_class(request.POST, instance=self.team)
         if form.is_valid():
             form.save()
             return redirect(reverse_lazy('users:team-list'))
-        return render(request, self.template_name, {'form': form, 'team_id': team_id})
+        return render(request, self.template_name, {'form': form, 'team_id': kwargs.get('id')})
 
 
 class UserProjectJoinedCreateView(View):
     template_name = 'user/project_joined/project_joined_add.html'
-    form_class = UserProjectJoinedCreateForm
+    form_class = UserProjectJoinedCreateUpdateForm
 
     def get(self, request, *args, **kwargs):
         teams = UserTeam.objects.filter(delete_flg=False)
@@ -154,8 +157,80 @@ class UserProjectJoinedListView(View):
 
 
 class UserProjectJoinedUpdateView(View):
+    template_name = 'user/project_joined/project_joined_update.html'
+    form_class = UserProjectJoinedCreateUpdateForm
+
+    def dispatch(self, request, *args, **kwargs):
+        project_joined_id = kwargs.get('id')
+        self.project_joined = UserProjectJoined.objects.filter(id=project_joined_id).first()
+        if not self.project_joined:
+            return render(request, '404.html', {})
+        return super().dispatch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
-        pass
+        teams = UserTeam.objects.filter(delete_flg=False)
+        return render(request, self.template_name, {'project_joined': self.project_joined, 'teams': teams})
 
     def post(self, request, *args, **kwargs):
-        pass
+        form = self.form_class(request.POST, instance=self.project_joined)
+        if form.is_valid():
+            members = form.cleaned_data['members']
+            form.cleaned_data['members'] = members.split(';')
+            self.project_joined.__dict__.update(**form.cleaned_data)
+            self.project_joined.save()
+            return redirect(reverse_lazy('users:project-joined-list'))
+        return render(request, self.template_name, {'form': form, 'project_joined_id': kwargs.get('id')})
+
+
+class UserMemberCreateView(View):
+    template_name = 'user/member/member_add.html'
+    form_class = UserMemberCreateUpdateForm
+
+    def dispatch(self, request, *args, **kwargs):
+        teams = UserTeam.objects.filter(delete_flg=False)
+        positions = UserPosition.objects.filter(delete_flg=False)
+        user_project_joined = UserProjectJoined.objects.filter(delete_flg=False)
+        self.context = {
+            'teams': teams,
+            'positions': positions,
+            'user_project_joined': user_project_joined,
+        }
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse_lazy('users:member-list'))
+        self.context.update({'form': form})
+        return render(request, self.template_name, self.context)
+
+
+class UserMemberListView(View):
+    template_name = 'user/member/member_list.html'
+    paginate_by = 10
+
+    def get(self, request, *args, **kwargs):
+        members = User.objects.filter(delete_flg=False).order_by('username')
+        paginator = Paginator(members, self.paginate_by)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return render(request, self.template_name, {'members': page_obj})
+
+
+class UserSkillCreateView(View):
+    template_name = 'user/skill/skill_add.html'
+    form_class = UserSkillCreateUpdateForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.cleaned_data['user'] = request.user
+            return redirect(reverse_lazy('users:project-joined-list'))
+        return render(request, self.template_name, {'form': form})

@@ -4,10 +4,10 @@
 <div class="col-md-6">
     <div class="content-box-large">
         <div class="panel-heading">
-            <div class="panel-title">Table Positions</div>
+            <div class="panel-title">Table Members</div>
 
             <div class="panel-options">
-                <a href="{% url 'users:position-list' %}" data-rel="collapse"><i
+                <a href="{% url 'users:member-list' %}" data-rel="collapse"><i
                         class="glyphicon glyphicon-refresh"></i></a>
             </div>
         </div>
@@ -16,45 +16,41 @@
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Short Name</th>
-                    <th>Project Leader</th>
-                    <th>Number members</th>
+                    <th>Username</th>
+                    <th>Email</th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for project_joined in projects_joined %}
+                {% for member in members %}
                 <tr>
-                    <td>{{ project_joined.id }}</td>
-                    <td><a href="{% url 'users:project-joined-update' project_joined.id %}">{{ project_joined.name }}</a></td>
-                    <td>{{ project_joined.short_name }}</td>
-                    <td>{{ project_joined.project_leader }}</td>
-                    <td>{{ project_joined.members|length }}</td>
+                    <td>{{ member.id }}</td>
+                    <td><a href="#">{{ member.username }}</a></td>
+                    <td>{{ member.email }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
             <div class="card-footer clearfix">
                 <ul class="pagination pagination-sm m-0 float-right">
-                    {% if projects_joined.has_previous %}
+                    {% if members.has_previous %}
                     <li class="page-item">
                         <a class="page-link" href="?page=1">«</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ projects_joined.previous_page_number }}">prev</a>
+                        <a class="page-link" href="?page={{ members.previous_page_number }}">prev</a>
                     </li>
                     {% endif %}
                     <li class="page-item">
                         <a class="current page-link">
-                            {{ projects_joined.number }}
+                            {{ members.number }}
                         </a>
                     </li>
-                    {% if projects_joined.has_next %}
+                    {% if members.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ projects_joined.next_page_number }}">next</a>
+                        <a class="page-link" href="?page={{ members.next_page_number }}">next</a>
                     </li>
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ projects_joined.paginator.num_pages }}">»</a>
+                        <a class="page-link" href="?page={{ members.paginator.num_pages }}">»</a>
                     </li>
                     {% endif %}
                 </ul>
