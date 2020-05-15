@@ -45,3 +45,9 @@ class UserSkillCreateUpdateForm(forms.ModelForm):
     class Meta:
         model = UserSkill
         fields = ['name', 'level', 'years_experience']
+
+
+class UserExportCSVCreateForm(forms.Form):
+    export_position = forms.BooleanField(required=False)
+    # export_skill = forms.BooleanField(required=False)
+    export_team = forms.BooleanField(required=False)

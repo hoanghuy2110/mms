@@ -7,8 +7,11 @@
             <div class="panel-title">Table Positions</div>
 
             <div class="panel-options">
-                <a href="{% url 'users:team-list' %}" data-rel="collapse"><i
-                        class="glyphicon glyphicon-refresh"></i></a>
+                <form action="{% url 'users:export' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="export_team" value="1">
+                    <button type="submit" class="btn btn-primary glyphicon glyphicon-print" data-rel="collapse"> Export</button>
+                </form>
             </div>
         </div>
         <div class="panel-body">

@@ -1,0 +1,3 @@
+id,created_at,updated_at,delete_flg,name,description,leader
+1,2020-05-14 06:37:29.023058+00:00,2020-05-14 06:37:29.023123+00:00,False,Team 1,xxx,Leader 1
+2,2020-05-14 06:53:13.373813+00:00,2020-05-14 06:56:11.327488+00:00,False,Team 2,xxxxx,Leader 2

@@ -12,7 +12,8 @@ from .views import (
     UserProjectJoinedListView,
     UserProjectJoinedUpdateView,
     UserMemberCreateView,
-    UserMemberListView
+    UserMemberListView,
+    UserExportCSVCreateView
     # SignInView,
     # SignOutView,
     # UserListView,
@@ -40,4 +41,5 @@ urlpatterns = [
     path('project-joined/add/', UserProjectJoinedCreateView.as_view(), name='project-joined-add'),
     path('projects-joined/', UserProjectJoinedListView.as_view(), name='project-joined-list'),
     path('project-joined/<int:id>/edit/', UserProjectJoinedUpdateView.as_view(), name='project-joined-update'),
+    path('export/', UserExportCSVCreateView.as_view(), name='export')
 ]

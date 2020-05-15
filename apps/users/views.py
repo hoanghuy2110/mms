@@ -1,14 +1,21 @@
+import csv
+import datetime
+import os
+
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
+from django.conf import settings
+import pandas as pd
 
 from apps.users.forms import (
     UserPositionCreatUpdateForm,
     UserTeamCreateUpdateForm,
     UserProjectJoinedCreateUpdateForm,
     UserSkillCreateUpdateForm,
-    UserMemberCreateUpdateForm
+    UserMemberCreateUpdateForm,
+    UserExportCSVCreateForm
 )
 from apps.users.models import (
     UserPosition,
@@ -234,3 +241,36 @@ class UserSkillCreateView(View):
             form.cleaned_data['user'] = request.user
             return redirect(reverse_lazy('users:project-joined-list'))
         return render(request, self.template_name, {'form': form})
+
+
+class UserExportCSVCreateView(View):
+    form_class = UserExportCSVCreateForm
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            model = None
+            prefix = None
+            if form.cleaned_data['export_position']:
+                model = UserPosition
+                prefix = 'position'
+            elif form.cleaned_data['export_team']:
+                model = UserTeam
+                prefix = 'team'
+            if not model:
+                return render(request, '404.html', {})
+            data = model.objects.filter(delete_flg=False).order_by('created_at')
+            data = list(data.values())
+            keys = data[0].keys()
+            folder_media = os.path.join(settings.BASE_DIR, 'media/export')
+            if not os.path.isdir(f'{folder_media}/{prefix}'):
+                os.mkdir(f'{folder_media}/{prefix}')
+
+            file_name = datetime.datetime.now().strftime(f'%Y%m%d_%H%M%S.csv')
+            path_file = f'/{folder_media}/{prefix}/{file_name}'
+            with open(path_file, 'w') as output_file:
+                dict_writer = csv.DictWriter(output_file, keys)
+                dict_writer.writeheader()
+                dict_writer.writerows(data)
+            return redirect(f'/media/export/{prefix}/{file_name}')
+        return render(request, '500.html', {})

@@ -1,0 +1,3 @@
+id,created_at,updated_at,delete_flg,name,short_name
+1,2020-05-12 07:13:40.398569+00:00,2020-05-12 07:13:40.398656+00:00,False,Develop,Dev
+2,2020-05-12 07:14:21.865707+00:00,2020-05-14 07:01:17.254209+00:00,False,Unit Manager,UM
