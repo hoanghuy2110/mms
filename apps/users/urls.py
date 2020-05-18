@@ -1,6 +1,7 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 
-from .views import (
+from app.users.views import (
     UserPositionCreateView,
     UserPositionListView,
     UserPositionUpdateView,
@@ -14,25 +15,30 @@ from .views import (
     UserMemberCreateView,
     UserMemberListView,
     UserExportCSVCreateView,
-    UserSkillCreateView
+    UserSkillCreateView,
     # SignInView,
     # SignOutView,
+    # UserUpdateView,
+    sign_up_view,
+    SignInView,
+    SignOutView,
+    UserDetailView,
     # UserListView,
 )
 
 app_name = 'users'
 
 urlpatterns = [
-    # path('signup', SignUpView.as_view(), name='signup'),
-    # path('signin', SignInView.as_view(), name='signin'),
-    # path('signout', SignOutView.as_view(), name='signout'),
+    path('signup', sign_up_view, name='signup'),
+    path('signin', SignInView.as_view(), name='signin'),
+    path('signout', SignOutView.as_view(), name='signout'),
     #
     # path('user/<int:id>/change-role/', ChangeRoleUserView.as_view(), name='change-role'),
     path('member/add/', UserMemberCreateView.as_view(), name='member-add'),
     path('member/<int:id>/skill/add/', UserSkillCreateView.as_view(), name='member-add-skill'),
     path('members/', UserMemberListView.as_view(), name='member-list'),
     # path('user/<int:id>/edit/', UserUpdateView.as_view(), name='user-update'),
-    # path('user/<int:id>/', UserDetailView.as_view(), name='user-detail'),
+    path('user/<int:id>/profile/', UserDetailView.as_view(), name='profile'),
     path('dashboard/', AdminDashboardView.as_view(), name='dashboard'),
     path('position/add/', UserPositionCreateView.as_view(), name='position-add'),
     path('position/<int:id>/edit/', UserPositionUpdateView.as_view(), name='position-update'),
