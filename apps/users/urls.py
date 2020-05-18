@@ -1,7 +1,6 @@
 from django.urls import path
-from django.contrib.auth.decorators import login_required
 
-from app.users.views import (
+from apps.users.views import (
     UserPositionCreateView,
     UserPositionListView,
     UserPositionUpdateView,
@@ -16,23 +15,18 @@ from app.users.views import (
     UserMemberListView,
     UserExportCSVCreateView,
     UserSkillCreateView,
-    # SignInView,
-    # SignOutView,
-    # UserUpdateView,
-    sign_up_view,
+    SignUpView,
     SignInView,
     SignOutView,
     UserDetailView,
-    # UserListView,
 )
 
 app_name = 'users'
 
 urlpatterns = [
-    path('signup', sign_up_view, name='signup'),
-    path('signin', SignInView.as_view(), name='signin'),
-    path('signout', SignOutView.as_view(), name='signout'),
-    #
+    path('signup/', SignUpView.as_view(), name='signup'),
+    path('signin/', SignInView.as_view(), name='signin'),
+    path('signout/', SignOutView.as_view(), name='signout'),
     # path('user/<int:id>/change-role/', ChangeRoleUserView.as_view(), name='change-role'),
     path('member/add/', UserMemberCreateView.as_view(), name='member-add'),
     path('member/<int:id>/skill/add/', UserSkillCreateView.as_view(), name='member-add-skill'),

@@ -401,6 +401,7 @@ body {
     left: 0;
     right: 0;
     text-align: center;
+    margin-top: 100px;
 }
 
 .login-wrapper .box {

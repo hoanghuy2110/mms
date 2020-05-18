@@ -1,7 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate
 
-from app.users.models import (
+from apps.users.models import (
     UserPosition,
     UserProjectJoined,
     UserTeam,
@@ -54,30 +54,32 @@ class UserExportCSVCreateForm(forms.Form):
     export_team = forms.BooleanField(required=False)
 
 
-class SigninForm(forms.Form):
-    username = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your Username', 'class': 'form-control'}
-        )
-    )
-    password = forms.CharField(
-        max_length=100,
-        widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password', 'class': 'form-control'})
-    )
+class SignUpForm(forms.Form):
+    email = forms.EmailField(max_length=100)
+    password = forms.CharField(max_length=256)
+    password1 = forms.CharField(max_length=256)
+
+    def clean(self):
+        super().clean()
+        data = self.cleaned_data
+        password = data.get('password')
+        password1 = data.get('password1')
+        if password != password1:
+            raise forms.ValidationError("Password & Password Confirm not matching!")
+
+        if User.objects.filter(email=data.get('email')).exists():
+            raise forms.ValidationError("User already exists")
 
 
-class SignUpForm(UserCreationForm):
-    username = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your Username', 'class': 'form-control'}))
-    email = forms.EmailField(max_length=100,
-        help_text='Required. Inform a valid email address.',
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your Username', 'class': 'form-control'})
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': 'Enter your Password'})
-    )
+class SignInForm(forms.Form):
+    email = forms.EmailField(max_length=100)
+    password = forms.CharField(max_length=256)
 
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'password')
+    def clean(self):
+        super().clean()
+        data = self.cleaned_data
+        password = data.get('password')
+        email = data.get('email')
+        user = authenticate(username=email, password=password)
+        if not user:
+            raise forms.ValidationError("Email & Password not matching!")

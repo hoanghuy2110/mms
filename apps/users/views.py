@@ -3,6 +3,7 @@ import datetime
 import os
 
 from django.core.paginator import Paginator
+from django import forms
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -10,20 +11,19 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.views import LogoutView
-from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
-# import pandas as pd
 
-from app.users.forms import (
+from apps.users.forms import (
     UserPositionCreatUpdateForm,
     UserTeamCreateUpdateForm,
     UserProjectJoinedCreateUpdateForm,
     UserSkillCreateUpdateForm,
     UserMemberCreateUpdateForm,
     UserExportCSVCreateForm,
-    SigninForm
+    SignUpForm,
+    SignInForm
 )
-from app.users.models import (
+from apps.users.models import (
     UserPosition,
     UserTeam,
     UserProjectJoined,
@@ -297,43 +297,44 @@ class UserExportCSVCreateView(View):
 
 
 class SignInView(View):
+    template_name = 'user/auth/signin.html'
+    form_class = SignInForm
+
     def get(self, request, *args, **kwargs):
-        template_name = 'auth/signin.html'
-        form = SigninForm()
-        content = {'form': form}
-        return render(request, template_name, content)
+        return render(request, self.template_name, {})
 
-    def post(self, request):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            login(request, User.objects.get(email=form.cleaned_data.get('email')))
+            return redirect('/dashboard')
+        return render(request, self.template_name, {'form': form})
+
+
+class SignUpView(View):
+    template_name = 'user/auth/signup.html'
+    form_class = SignUpForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            user = User.objects.create(
+                username=data.get('email'),
+                email=data.get('email')
+            )
+            user.set_password(data.get('password'))
+            user.save()
             login(request, user)
-            if 'next' in request.POST:
-                return redirect(request.POST.get('next'))
-            else:
-                return redirect('/dashboard')
-
-        return HttpResponse('Error username or password')
+            return redirect('/dashboard')
+        return render(request, self.template_name, {'form': form})
 
 
-def sign_up_view(request):
-    form = UserCreationForm(request.POST)
-    if form.is_valid():
-        form.save()
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        user = authenticate(username=username, password=password)
-        login(request, user)
-        return redirect('/dashboard')
-    return render(request, 'auth/signup.html', {'form': form})
+class SignOutView(View):
 
-
-def logout_view(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('users:login'))
-
-
-class SignOutView(LogoutView):
-    template_name = 'auth/signin.html'
-    extra_context = {'form': SigninForm()}
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect(reverse_lazy('users:signin'))

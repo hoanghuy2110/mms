@@ -52,7 +52,7 @@ class User(AbstractBaseUser, BaseModel):
     is_activate = models.BooleanField(default=False)
     position = models.ForeignKey(UserPosition, on_delete=models.CASCADE, null=True)
     team = models.ForeignKey(UserTeam, on_delete=models.CASCADE, null=True)
-    user_project_joined = models.ManyToManyField(UserProjectJoined)
+    user_project_joined = models.ManyToManyField(UserProjectJoined, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
