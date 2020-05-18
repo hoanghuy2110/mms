@@ -14,7 +14,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse
 # import pandas as pd
 
-from app.users.forms import (
+from apps.users.forms import (
     UserPositionCreatUpdateForm,
     UserTeamCreateUpdateForm,
     UserProjectJoinedCreateUpdateForm,
@@ -23,7 +23,7 @@ from app.users.forms import (
     UserExportCSVCreateForm,
     SigninForm
 )
-from app.users.models import (
+from apps.users.models import (
     UserPosition,
     UserTeam,
     UserProjectJoined,

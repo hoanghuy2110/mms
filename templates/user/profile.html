@@ -7,11 +7,11 @@
             <div class="panel-title">Profile User</div>
         </div>
         <div class="panel-body">
-            {% for user in user %}
+            {% for item in user %}
                 <div class="form-group">
                     <label for="inputName" class="col-sm-2 control-label">Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="inputName" placeholder="Name" name="name" value="{{ user.username }}">
+                        <input type="text" class="form-control" id="inputName" placeholder="Name" name="name" value="{{ item.username }}">
                     </div>
                 </div>
                 <div class="form-group">
