@@ -19,7 +19,6 @@ from apps.users.views import (
     SignUpView,
     SignInView,
     SignOutView,
-    UserDetailView,
     UserMemberUpdateView
 )
 
@@ -33,7 +32,6 @@ urlpatterns = [
     path('member/add/', UserMemberCreateView.as_view(), name='member-add'),
     path('members/', UserMemberListView.as_view(), name='member-list'),
     path('member/<int:id>/edit/', UserMemberUpdateView.as_view(), name='member-update'),
-    path('user/<int:id>/profile/', UserDetailView.as_view(), name='profile'),
     path('dashboard/', AdminDashboardView.as_view(), name='dashboard'),
     path('position/add/', UserPositionCreateView.as_view(), name='position-add'),
     path('position/<int:id>/edit/', UserPositionUpdateView.as_view(), name='position-update'),

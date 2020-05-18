@@ -33,19 +33,6 @@ from apps.users.decorators import admin_required
 
 DEFAULT_PASSWORD = 'Aa@123456'
 
-class UserDetailView(View):
-    template_name = 'user/profile.html'
-
-    def get(self, request, *args, **kwargs):
-        user_id = kwargs.get('id')
-        user = User.objects.filter(id=user_id)
-        # for course in user:
-        #     print(course['username'])
-        # print(user.username)
-        if not user:
-            return render(request, '404.html', {})
-        return render(request, self.template_name, {'user': user})
-
 
 class AdminDashboardView(View):
     template_name = 'base.html'
@@ -178,8 +165,8 @@ class UserProjectJoinedCreateView(View):
         if form.is_valid():
             members = form.cleaned_data['members']
             form.cleaned_data['members'] = members.split(';')
-            x = UserProjectJoined(**form.cleaned_data)
-            x.save()
+            obj = UserProjectJoined(**form.cleaned_data)
+            obj.save()
             return redirect(reverse_lazy('users:project-joined-list'))
         return render(request, self.template_name, {'form': form})
 
@@ -248,9 +235,7 @@ class UserMemberCreateView(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            skills = []
             data = form.cleaned_data
-
             user = User.objects.create(
                 username=data.get('username'),
                 email=data.get('username'),
@@ -260,16 +245,17 @@ class UserMemberCreateView(View):
                 team=data.get('team')
             )
             user.set_password(DEFAULT_PASSWORD)
+            user.save()
 
             input_skills = data.get('skills')
             for skill in json.loads(input_skills):
-                skills.append(UserSkill(
+                user_skill = UserSkill.objects.create(
                     name=skill.get('name'),
-                    # level=skill.get('level'),
-                    years_experience=skill.get('exp'),
-                    user=user
-                ))
-            UserSkill.objects.bulk_create(skills)
+                    level=skill.get('level'),
+                    years_experience=skill.get('exp')
+                )
+                user_skill.user.add(user)
+                user_skill.save()
             return redirect(reverse_lazy('users:member-list'))
         self.context.update({'form': form})
         return render(request, self.template_name, self.context)
@@ -288,11 +274,13 @@ class UserMemberUpdateView(View):
         if not member:
             return render(request, '404.html', {})
 
+        skills = UserSkill.objects.filter(user=member)
         self.context = {
             'teams': teams,
             'positions': positions,
             'user_project_joined': user_project_joined,
-            'member': member
+            'member': member,
+            'skills': skills
         }
         return super().dispatch(request, *args, **kwargs)
 
@@ -304,28 +292,16 @@ class UserMemberUpdateView(View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            skills = []
             data = form.cleaned_data
-
-            user = User.objects.create(
+            user = self.context['member']
+            user.update(**dict(
                 username=data.get('username'),
                 email=data.get('username'),
                 role=data.get('role'),
                 is_activate=data.get('is_activate'),
                 position=data.get('position'),
                 team=data.get('team')
-            )
-            user.set_password(DEFAULT_PASSWORD)
-
-            input_skills = data.get('skills')
-            for skill in json.loads(input_skills):
-                skills.append(UserSkill(
-                    name=skill.get('name'),
-                    # level=skill.get('level'),
-                    years_experience=skill.get('exp'),
-                    user=user
-                ))
-            UserSkill.objects.bulk_create(skills)
+            ))
             return redirect(reverse_lazy('users:member-list'))
         self.context.update({'form': form})
         return render(request, self.template_name, self.context)

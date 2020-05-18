@@ -7,6 +7,7 @@ def admin_required(function):
             if request.user.role != 0:
                 return HttpResponseForbidden('403 Forbidden')
             return function(request, *args, **kwargs)
-        except:
+        except Exception as e:
+            print(e)
             return HttpResponseForbidden('403 Forbidden')
     return wrapper

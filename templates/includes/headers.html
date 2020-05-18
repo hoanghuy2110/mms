@@ -29,7 +29,7 @@
                                         class="caret"></b></a>
                                 <ul class="dropdown-menu animated fadeInUp">
                                     <h5 class="text-overflow" style="margin-left: 15px">{{user.username}}</h5>
-                                    <li><a href="{% url 'users:profile' user.id %}">Profile</a></li>
+                                    <li><a href="{% url 'users:member-update' user.id %}">Profile</a></li>
                                     <li><a href="{% url 'users:signout' %}">Logout</a></li>
                                 </ul>
                             </li>
