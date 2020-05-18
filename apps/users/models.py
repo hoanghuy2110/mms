@@ -31,7 +31,6 @@ class UserProjectJoined(BaseModel):
     start_date = models.DateField()
     end_date = models.DateField()
     project_leader = models.CharField(max_length=150)
-    team = models.ForeignKey(UserTeam, on_delete=models.CASCADE)
     members = ArrayField(models.CharField(max_length=10, blank=True), size=MAX_TEAM_SIZE)
 
     class Meta:
@@ -76,8 +75,7 @@ class UserSkill(BaseModel):
     name = models.CharField(max_length=128)
     level = models.IntegerField(choices=LEVELS, default=LEVELS[0][0])
     years_experience = models.IntegerField(default=1)
-
-    # user = models.ManyToManyField(User)
+    user = models.ManyToManyField(User)
 
     class Meta:
         db_table = 'user_skill'

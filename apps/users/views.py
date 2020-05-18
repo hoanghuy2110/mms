@@ -1,17 +1,15 @@
 import csv
 import datetime
 import os
+import json
 
 from django.core.paginator import Paginator
-from django import forms
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.views import LogoutView
-from django.urls import reverse
 
 from apps.users.forms import (
     UserPositionCreatUpdateForm,
@@ -31,6 +29,9 @@ from apps.users.models import (
     User
 )
 
+from apps.users.decorators import admin_required
+
+DEFAULT_PASSWORD = 'Aa@123456'
 
 class UserDetailView(View):
     template_name = 'user/profile.html'
@@ -57,9 +58,11 @@ class UserPositionCreateView(View):
     template_name = 'user/position/position_add.html'
     form_class = UserPositionCreatUpdateForm
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {})
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -72,6 +75,7 @@ class UserPositionListView(View):
     template_name = 'user/position/position_list.html'
     paginate_by = 10
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         positions = UserPosition.objects.filter(delete_flg=False).order_by('name')
         paginator = Paginator(positions, self.paginate_by)
@@ -84,6 +88,7 @@ class UserPositionUpdateView(View):
     template_name = 'user/position/position_edit.html'
     form_class = UserPositionCreatUpdateForm
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         position_id = kwargs.get('id')
         position = UserPosition.objects.filter(id=position_id).first()
@@ -91,6 +96,7 @@ class UserPositionUpdateView(View):
             return render(request, '404.html', {})
         return render(request, self.template_name, {'position': position})
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         position_id = kwargs.get('id')
         position = UserPosition.objects.filter(id=position_id).first()
@@ -107,9 +113,11 @@ class UserTeamCreateView(View):
     template_name = 'user/team/team_add.html'
     form_class = UserTeamCreateUpdateForm
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {})
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -122,6 +130,7 @@ class UserTeamListView(View):
     template_name = 'user/team/team_list.html'
     paginate_by = 10
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         teams = UserTeam.objects.filter(delete_flg=False).order_by('name')
         paginator = Paginator(teams, self.paginate_by)
@@ -141,9 +150,11 @@ class UserTeamUpdateView(View):
             return render(request, '404.html', {})
         return super().dispatch(request, *args, **kwargs)
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, {'team': self.team})
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, instance=self.team)
         if form.is_valid():
@@ -156,10 +167,12 @@ class UserProjectJoinedCreateView(View):
     template_name = 'user/project_joined/project_joined_add.html'
     form_class = UserProjectJoinedCreateUpdateForm
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         teams = UserTeam.objects.filter(delete_flg=False)
         return render(request, self.template_name, {'teams': teams})
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -175,6 +188,7 @@ class UserProjectJoinedListView(View):
     template_name = 'user/project_joined/project_joined_list.html'
     paginate_by = 10
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         project_joined = UserProjectJoined.objects.filter(delete_flg=False).order_by('name')
         paginator = Paginator(project_joined, self.paginate_by)
@@ -194,10 +208,12 @@ class UserProjectJoinedUpdateView(View):
             return render(request, '404.html', {})
         return super().dispatch(request, *args, **kwargs)
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         teams = UserTeam.objects.filter(delete_flg=False)
         return render(request, self.template_name, {'project_joined': self.project_joined, 'teams': teams})
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST, instance=self.project_joined)
         if form.is_valid():
@@ -224,13 +240,92 @@ class UserMemberCreateView(View):
         }
         return super().dispatch(request, *args, **kwargs)
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name, self.context)
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            skills = []
+            data = form.cleaned_data
+
+            user = User.objects.create(
+                username=data.get('username'),
+                email=data.get('username'),
+                role=data.get('role'),
+                is_activate=data.get('is_activate'),
+                position=data.get('position'),
+                team=data.get('team')
+            )
+            user.set_password(DEFAULT_PASSWORD)
+
+            input_skills = data.get('skills')
+            for skill in json.loads(input_skills):
+                skills.append(UserSkill(
+                    name=skill.get('name'),
+                    # level=skill.get('level'),
+                    years_experience=skill.get('exp'),
+                    user=user
+                ))
+            UserSkill.objects.bulk_create(skills)
+            return redirect(reverse_lazy('users:member-list'))
+        self.context.update({'form': form})
+        return render(request, self.template_name, self.context)
+
+
+class UserMemberUpdateView(View):
+    template_name = 'user/member/member_edit.html'
+    form_class = UserMemberCreateUpdateForm
+
+    def dispatch(self, request, *args, **kwargs):
+        teams = UserTeam.objects.filter(delete_flg=False)
+        positions = UserPosition.objects.filter(delete_flg=False)
+        user_project_joined = UserProjectJoined.objects.filter(delete_flg=False)
+
+        member = User.objects.filter(id=kwargs.get('id')).first()
+        if not member:
+            return render(request, '404.html', {})
+
+        self.context = {
+            'teams': teams,
+            'positions': positions,
+            'user_project_joined': user_project_joined,
+            'member': member
+        }
+        return super().dispatch(request, *args, **kwargs)
+
+    @method_decorator(admin_required)
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.context)
+
+    @method_decorator(admin_required)
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            skills = []
+            data = form.cleaned_data
+
+            user = User.objects.create(
+                username=data.get('username'),
+                email=data.get('username'),
+                role=data.get('role'),
+                is_activate=data.get('is_activate'),
+                position=data.get('position'),
+                team=data.get('team')
+            )
+            user.set_password(DEFAULT_PASSWORD)
+
+            input_skills = data.get('skills')
+            for skill in json.loads(input_skills):
+                skills.append(UserSkill(
+                    name=skill.get('name'),
+                    # level=skill.get('level'),
+                    years_experience=skill.get('exp'),
+                    user=user
+                ))
+            UserSkill.objects.bulk_create(skills)
             return redirect(reverse_lazy('users:member-list'))
         self.context.update({'form': form})
         return render(request, self.template_name, self.context)
@@ -240,6 +335,7 @@ class UserMemberListView(View):
     template_name = 'user/member/member_list.html'
     paginate_by = 10
 
+    @method_decorator(admin_required)
     def get(self, request, *args, **kwargs):
         members = User.objects.filter(delete_flg=False).order_by('username')
         paginator = Paginator(members, self.paginate_by)
@@ -248,24 +344,10 @@ class UserMemberListView(View):
         return render(request, self.template_name, {'members': page_obj})
 
 
-class UserSkillCreateView(View):
-    # template_name = 'user/skill/skill_add.html'
-    # form_class = UserSkillCreateUpdateForm
-    #
-    # def get(self, request, *args, **kwargs):
-    #     return render(request, self.template_name, {})
-
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            form.cleaned_data['user'] = request.user
-            return redirect(reverse_lazy('users:project-joined-list'))
-        return render(request, self.template_name, {'form': form})
-
-
 class UserExportCSVCreateView(View):
     form_class = UserExportCSVCreateForm
 
+    @method_decorator(admin_required)
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():

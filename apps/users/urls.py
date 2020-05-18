@@ -1,5 +1,7 @@
 from django.urls import path
 
+
+
 from apps.users.views import (
     UserPositionCreateView,
     UserPositionListView,
@@ -14,11 +16,11 @@ from apps.users.views import (
     UserMemberCreateView,
     UserMemberListView,
     UserExportCSVCreateView,
-    UserSkillCreateView,
     SignUpView,
     SignInView,
     SignOutView,
     UserDetailView,
+    UserMemberUpdateView
 )
 
 app_name = 'users'
@@ -29,9 +31,8 @@ urlpatterns = [
     path('signout/', SignOutView.as_view(), name='signout'),
     # path('user/<int:id>/change-role/', ChangeRoleUserView.as_view(), name='change-role'),
     path('member/add/', UserMemberCreateView.as_view(), name='member-add'),
-    path('member/<int:id>/skill/add/', UserSkillCreateView.as_view(), name='member-add-skill'),
     path('members/', UserMemberListView.as_view(), name='member-list'),
-    # path('user/<int:id>/edit/', UserUpdateView.as_view(), name='user-update'),
+    path('member/<int:id>/edit/', UserMemberUpdateView.as_view(), name='member-update'),
     path('user/<int:id>/profile/', UserDetailView.as_view(), name='profile'),
     path('dashboard/', AdminDashboardView.as_view(), name='dashboard'),
     path('position/add/', UserPositionCreateView.as_view(), name='position-add'),

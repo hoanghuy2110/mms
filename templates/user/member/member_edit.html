@@ -4,7 +4,7 @@
 <div class="col-md-6">
     <div class="content-box-large">
         <div class="panel-heading">
-            <div class="panel-title">Create Member Form</div>
+            <div class="panel-title">Update Member Form</div>
 
             <div class="panel-options">
                 <a href="{% url 'users:member-add' %}" data-rel="collapse"><i
@@ -23,7 +23,7 @@
                     <label for="inputUsername" class="col-sm-2 control-label">UserName</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="inputUsername" placeholder="UserName"
-                               name="username" value="{{ form.username.value }}">
+                               name="username" value="{% if form %}{{ form.username.value }}{% else %}{{ member.username }}{% endif %}">
                         {% if form.username.errors %}
                         <p></p>
                         {% for error in form.name.errors %}
@@ -36,7 +36,7 @@
                     <label for="inputEmail" class="col-sm-2 control-label">Email</label>
                     <div class="col-sm-10">
                         <input type="email" class="form-control" id="inputEmail" placeholder="Email"
-                               name="email" value="{{ form.short_name.value }}">
+                               name="email" value="{% if form %}{{ form.short_name.value }}{% else %}{{ member.email }}{% endif %}">
                         {% if form.email.errors %}
                         <p></p>
                         {% for error in form.email.errors %}
@@ -49,8 +49,8 @@
                     <label for="inputRole" class="col-sm-2 control-label">Username</label>
                     <div class="col-sm-10">
                         <select class="form-control" id="inputRole" name="role">
-                            <option value="0" {% if form.role == 0 %} selected {% endif %}>Admin</option>
-                            <option value="1" {% if form.role == 1 %} selected {% endif %}>Member</option>
+                            <option value="0" {% if form.role == 0 or member.role == 0 %} selected {% endif %}>Admin</option>
+                            <option value="1" {% if form.role == 1 or member.role == 1 %} selected {% endif %}>Member</option>
                         </select>
                         {% if form.role.errors %}
                         <p></p>
@@ -64,8 +64,8 @@
                     <label for="inputActive" class="col-sm-2 control-label">Active</label>
                     <div class="col-sm-10">
                         <select class="form-control" id="inputActive" name="is_activate">
-                            <option value="0" {% if form.is_activate == 0 %}selected{% endif %}>InActive</option>
-                            <option value="1" {% if form.is_activate == 1 %}selected{% endif %}>Active</option>
+                            <option value="0" {% if form.is_activate == 0 or member.is_activate == 0 %}selected{% endif %}>InActive</option>
+                            <option value="1" {% if form.is_activate == 1 or member.is_activate == 1 %}selected{% endif %}>Active</option>
                         </select>
                         {% if form.is_activate.errors %}
                         <p></p>
@@ -80,13 +80,13 @@
                     <div class="col-sm-10">
                         <select class="form-control" id="inputPosition" name="position">
                             {% for position in positions %}
-                            <option value="{{ position.id }}" {% if form.is_activate.value == position.id %} selected {% endif %}>{{ position.name }}
+                            <option value="{{ position.id }}" {% if form.position.value == position.id or member.position == position.id %} selected {% endif %}>{{ position.name }}
                             </option>
                             {% endfor %}
                         </select>
-                        {% if form.is_activate.errors %}
+                        {% if form.position.errors %}
                         <p></p>
-                        {% for error in form.is_activate.errors %}
+                        {% for error in form.position.errors %}
                         <p><strong class="text-danger">{{ error|escape }}</strong></p>
                         {% endfor %}
                         {% endif %}
@@ -115,7 +115,7 @@
                     <div class="col-sm-10">
                         <select class="form-control" id="inputTeam" name="team">
                             {% for team in teams %}
-                            <option value="{{ team.id }}" {% if form.team.value == team.id %} selected {% endif %}>{{ team.name }}
+                            <option value="{{ team.id }}" {% if form.team.value == team.id or member.team.id == team.id %} selected {% endif %}>{{ team.name }}
                             </option>
                             {% endfor %}
                         </select>
@@ -127,25 +127,25 @@
                         {% endif %}
                     </div>
                 </div>
-<!--                <div class="form-group">-->
-<!--                    <label for="inputProjectJoined" class="col-sm-2 control-label">Project Joined</label>-->
-<!--                    <div class="col-sm-10">-->
-<!--                        <select class="form-control" id="inputProjectJoined" name="user_project_joined" multiple-->
-<!--                                required>-->
-<!--                            {% for project in user_project_joined %}-->
-<!--                            <option value="{{ project.id }}" {% if form.user_project_joined.value == project.id %}-->
-<!--                                    selected {% endif %}>{{ project.name }}-->
-<!--                            </option>-->
-<!--                            {% endfor %}-->
-<!--                        </select>-->
-<!--                        {% if form.project_joined.errors %}-->
-<!--                        <p></p>-->
-<!--                        {% for error in form.project_joined.errors %}-->
-<!--                        <p><strong class="text-danger">{{ error|escape }}</strong></p>-->
-<!--                        {% endfor %}-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div class="form-group">
+                    <label for="inputProjectJoined" class="col-sm-2 control-label">Project Joined</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="inputProjectJoined" name="user_project_joined" multiple
+                                required>
+                            {% for project in user_project_joined %}
+                            <option value="{{ project.id }}" {% if form.user_project_joined.value == project.id %}
+                                    selected {% endif %}>{{ project.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if form.project_joined.errors %}
+                        <p></p>
+                        {% for error in form.project_joined.errors %}
+                        <p><strong class="text-danger">{{ error|escape }}</strong></p>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
                         <button type="submit" class="btn btn-primary">Save</button>

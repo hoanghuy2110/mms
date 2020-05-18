@@ -21,7 +21,7 @@ class UserProjectJoinedCreateUpdateForm(forms.ModelForm):
 
     class Meta:
         model = UserProjectJoined
-        fields = ['name', 'short_name', 'start_date', 'end_date', 'project_leader', 'team']
+        fields = ['name', 'short_name', 'start_date', 'end_date', 'project_leader']
 
 
 class UserTeamCreateUpdateForm(forms.ModelForm):
@@ -31,6 +31,8 @@ class UserTeamCreateUpdateForm(forms.ModelForm):
 
 
 class UserMemberCreateUpdateForm(forms.ModelForm):
+    skills = forms.CharField()
+
     class Meta:
         model = User
         fields = ['username',
@@ -39,7 +41,15 @@ class UserMemberCreateUpdateForm(forms.ModelForm):
                   'is_activate',
                   'position',
                   'team',
-                  'user_project_joined']
+                  'skills']
+
+    def clean(self):
+        super().clean()
+        data = self.cleaned_data
+        username = data.get('password')
+        user = User.objects.filter(username=username).exists()
+        if user:
+            raise forms.ValidationError("User already exists")
 
 
 class UserSkillCreateUpdateForm(forms.ModelForm):

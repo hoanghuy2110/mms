@@ -24,7 +24,7 @@
                 {% for member in members %}
                 <tr>
                     <td>{{ member.id }}</td>
-                    <td><a href="#">{{ member.username }}</a></td>
+                    <td><a href="{% url 'users:member-update' member.id %}">{{ member.username }}</a></td>
                     <td>{{ member.email }}</td>
                 </tr>
                 {% endfor %}
